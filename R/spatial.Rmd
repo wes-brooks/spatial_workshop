@@ -1,0 +1,55 @@
+---
+title: "Methods for spatial statistics"
+author: "Wesley Brooks"
+date: "18 November 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE}
+nx <- 15
+x <- rep(seq(0, 1, length=nx), times=nx)
+y <- rep(seq(0, 1, length=nx), each=nx)
+```
+
+## Spatial statistics
+The basic insight of spatial statistics is that nearby locations are more alike than distant ones. Spatial statistical methods incorporate this insight into statistical models. 
+ 
+```{r spatial-err, echo=FALSE, fig.width=11, fig.height=6}
+# Generate the independent random field
+z1 <- matrix(rnorm(nx**2), nx, nx)
+
+# Generate the spatial random field
+d <- sqrt(outer(x, x, '-')^2 + outer(y, y, '-')^2)
+s2 <- 1
+range <- 0.25
+expmod <- s2 * exp(-d / range)
+L <- t(chol(expmod))
+z2 <- matrix(L %*% as.matrix(as.vector(z1)), nx, nx)
+
+
+layout(matrix(1:2, 1, 2))
+image(z1, main="independent random field")
+image(z2, main="spatial random field")
+```
+
+
+
+## Spatial data
+Spatial data mostly refers to data that can be located on a map
+
+$$ \mu \sim N(0, \boldsymbol{\Sigma})$$
+
+
+## Spatial analysis
+Import the analysis packages:
+
+```{r libraries, results='hide', message=FALSE}
+library('geoR')
+library('geoRglm')
+library('sp')
+```
+

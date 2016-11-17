@@ -1,0 +1,29 @@
+model{
+
+for(Dsite in 1:Nsite) {
+
+  meansite[Dsite] <- intercept
+
+  for(Dobservations in Ssite[Dsite]:(Ssite[Dsite+1]-1)){
+
+    counts[Dobservations] ~ dpois(meanobservations[Dobservations])
+    log(meanobservations[Dobservations]) <- Rsite[Dsite]+ logOffset[Dobservations]
+
+  }#observations
+}#site
+
+
+Rsite[1:NsiteSpatial] ~ spatial.exp(meansite[1:NsiteSpatial], xSpatialsite[1:NsiteSpatial],
+    ySpatialsite[1:NsiteSpatial],Vsite, scalesite, 1)
+Vsite <- pow(SDsite,2)
+phisite  ~  dgamma(100,1) 
+scalesite <- 2*SDsite/phisite
+
+# priors
+
+intercept  ~ dunif(-1000,1000)
+
+Tsite <- pow(SDsite, -2)
+SDsite ~ dunif(0, 100)
+
+} # model
